@@ -24,7 +24,7 @@ This program is a script mod for Minecraft PE.
 | ---- | ---- | ---- |
 | /mod.dig | 機能の有効無効を切り替える |on |
 | /mod.dig mode &lt;mode> | モードの切り替え。初期状態ではgroup。<br>group:同種別のブロックを削除<br>flat:壊したブロックよりも下のブロックは壊さない。隣接する別種別のブロックであっても壊せると判断すれば壊す | group |
-| /mod.dig set range &lt;number> | 壊す最大範囲を指定。壊したブロックから上下前後左右に適用する。flatの場合、下方向は無効。 | 1 |
+| /mod.dig set range &lt;number> | 壊す最大範囲を指定。壊したブロックから上下前後左右に適用する。flatの場合、下方向は無効。*5以上を指定すると重くなります。* 最大値は3を強く推奨。 | 1 |
 
 # ライセンス
 GPL v3で配布。
