@@ -24,7 +24,18 @@ This program is a script mod for Minecraft PE.
 | ---- | ---- | ---- |
 | /mod.dig | 機能の有効無効を切り替える |on |
 | /mod.dig mode &lt;mode> | モードの切り替え。初期状態ではgroup。<br>group:同種別のブロックを削除<br>flat:壊したブロックよりも下のブロックは壊さない。隣接する別種別のブロックであっても壊せると判断すれば壊す | group |
-| /mod.dig set range &lt;number> | 壊す最大範囲を指定。壊したブロックから上下前後左右に適用する。flatの場合、下方向は無効。*5以上を指定すると重くなります。* 最大値は3を強く推奨。 | 1 |
+| /mod.dig set range &lt;number> | 壊す最大範囲を指定。壊したブロックから上下前後左右に適用する。flatの場合、下方向は無効。*5以上を指定すると重くなります。* 最大値は3を強く推奨。 | 2 |
+|/mod.dig set safeMode &lt;0 or 1> | groupモード時にBlockを安全に掘削するかの指定。0:false, 1:true | 1 |
+### safeModeについて
+safeModeが有効の場合、以下のBlockは一括で掘削しない。
+* Block.stone
+* Block.grass
+* Block.dirt
+* Block.coarse_dirt
+* Block.podzol
+* Block.sand
+* Block.red_sand
+
 
 # ライセンス
 GPL v3で配布。
