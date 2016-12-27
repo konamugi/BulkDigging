@@ -1,5 +1,5 @@
 /*
- * Bulk Digging 0.1.0
+ * Bulk Digging 0.2.0
  * Copyright (c) 2016 konamugi All Rights Reserved.
  * 
  * This program is free software; you can redistribute it and/or modify it 
@@ -19,8 +19,10 @@
 
 /** 一括削除有効/無効 */
 var burstMode=true;
-var range = 1;
+var range = 2;
 var debugMode=false;
+var safeMode=true;
+
 
 /** burstする条件SlotID */
 var targetSlot=[7,8];
@@ -33,6 +35,7 @@ var strategy;
 var Categories;
 var TargetMapping;
 var BCGlobal;
+var ignoreBlocks;
 function init() {
 	strategy = DestroyGroupBlockStrategy;
 	Categories = {
@@ -66,6 +69,7 @@ function init() {
 			Block:Block,
 			Item:Item
 			};
+	ignoreBlocks = [Block.stone, Block.grass, Block.dirt, Block.coarse_dirt, Block.podzol, Block.sand, Block.red_sand];
 }
 
 var BaseDestroyBlockLocation = {x:0, y:0, z:0, side:0};
@@ -128,6 +132,16 @@ function tempImpl(x,y,z,side, id, data) {
 
 }
 
+var destroyBlockImpl = function(x, y, z) {
+	debugMessage("destroyBlock("+ x + "," + y + "," + z + ")");
+	if (Math.random() * 10 > 1) {
+		Level.setTile(x, y, z, Block.air.id, Block.air.data);
+	} else {
+		Level.destroyBlock(x, y, z, false);
+	}
+	
+}
+
 var dropItems = function(x,y,z) {
 	for (var index in DestroyedBlocks) {
 		destroyedBlock = DestroyedBlocks[index].getBlock();
@@ -148,10 +162,25 @@ var dropItems = function(x,y,z) {
 	}
 }
 
+var validateSafeBlock = function(id, data) {
+	if (!safeMode) {
+		return true;
+	}
+	for (var i in ignoreBlocks) {
+		if (ignoreBlocks[i].id == id && ignoreBlocks[i].data == data) {
+			return false;
+		}
+	}
+	return true;
+}
+
 var DestroyGroupBlockStrategy = function(){};
 DestroyGroupBlockStrategy.destroyBlock = function(x,y,z,side, id, data) {
 	targetBlock = getTargetBlock(id,data);
 	if (targetBlock) {
+		if (!validateSafeBlock(id, data)) {
+			return;
+		}
 		if ((targetBlock.tool == BCStatics.pickaxe 
 				&& isPickaxe(Player.getInventorySlot(Player.getSelectedSlotId()))) 
 			||(targetBlock.tool == BCStatics.shovel 
@@ -171,7 +200,8 @@ DestroyGroupBlockStrategy.destroyBlockImpl = function(x,y,z,side,targetBlock) {
 	if (DestroyGroupBlockStrategy.isInternal(x,y,z) 
 			&& Level.getTile(x, y, z) == targetBlock.id 
 			&& Level.getData(x, y, z) == targetBlock.data) {
-		Level.destroyBlock(x, y, z, false);
+		//Level.destroyBlock(x, y, z, false);
+		destroyBlockImpl(x,y,z);
 		if(!DestroyedBlocks[targetBlock.key]) {
 			DestroyedBlocks[targetBlock.key] = new BlockCounter(targetBlock);
 		}
@@ -229,8 +259,8 @@ DestroyFlatBlockStrategy.destroyBlockImpl = function(x,y,z,side,targetBlock) {
 	tdata = Level.getData(x, y, z);
 	if (DestroyGroupBlockStrategy.isInternal(x,y,z)) {
 		if (tid == targetBlock.id && tdata == targetBlock.data) {
-			Level.destroyBlock(x, y, z, false);
-			//Level.setTile(x, y, z, 0, 0);
+			//Level.destroyBlock(x, y, z, false);
+			destroyBlockImpl(x,y,z);
 			if(!DestroyedBlocks[targetBlock.key]) {
 				DestroyedBlocks[targetBlock.key] = new BlockCounter(targetBlock);
 			}
@@ -354,9 +384,25 @@ function updateProperies(line) {
 	debugMessage("updateProperties:" + line);
 	if ((result = line.match(/^(\w+) (\d+)/))) {
 		if (result[1] == 'range') {
-			range = parseInt(result[2], 10);
-			infoMessage("range is updated. range=" + range);
-		} else {
+			temp = parseInt(result[2], 10);
+			if (temp > MAX_RANGE) {
+				errorMessage("range <= 5! value:" + temp);
+			} else {
+				range = temp;
+				infoMessage("range is updated. range=" + range);
+			}
+		} else if (result[1] == 'safeMode') {
+			temp = parseInt(result[2], 10);
+			if (temp == 0) {
+				safeMode = false;
+			} else if (temp == 1) {
+				safeMode = true;
+			} else {
+				errorMessage("safeMode: 0 or 1! value:" + temp);
+			}
+			infoMessage("safeMode is updated. mode=" + safeMode);
+		} 
+		else {
 			errorMessage("[Update Properites]Illegal Format! args=" + line);
 		}
 	} else {
@@ -1422,21 +1468,6 @@ var Block = {
 	//
 	//for Shovel
 	//
-	grass : {
-		key : "grass",
-		id : 3,
-		data : 0,
-		label : "Grass",
-		name : "grass",
-		tool : BCStatics.shovel,
-		stackSize : 64,
-		drop : [{
-			item : "Block.dirt",
-			num : 1
-		}],
-		experience : [],
-		state : {}
-	},
 	grass : {
 		key : "grass",
 		id : 2,
