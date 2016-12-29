@@ -6,6 +6,10 @@ This program is a script mod for Minecraft PE.
 * 土や石をまとめて掘る
 * 幾つかのモードがある
 
+## ダウンロード
+* ダウンロード先 : https://github.com/konamugi/BulkDigging/tree/master/script
+* ファイル : BulkDigging.js
+
 ## 使い方
 * Slotの右2つにシャベルもしくはツルハシを入れ、そのシャベルもしくはツルハシを使って掘る。
 * 基本的には同じ種別のブロックをまとめて掘る。
