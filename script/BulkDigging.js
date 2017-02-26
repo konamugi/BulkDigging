@@ -2049,7 +2049,7 @@ var Item = {
 	quartz : {
 		key : "quartz",
 		type : "Raw materials",
-		id : 388,
+		id : 406,
 		data : 0,
 		label : "Nether Quartz",
 		name : "quartz",
